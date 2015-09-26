@@ -1942,4 +1942,15 @@ if ([str isEqualToString:@#orientation]) return (UIDeviceOrientation)orientation
     return @"Unknown";
 }
 
++(BOOL) forceTouchCapabilityAvailable
+{
+    if([self isIOS9OrGreater]){
+        UITraitCollection *traitCollection = [[UITraitCollection init] autorelease];
+        return (traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable);
+    }else{
+        return NO;
+    }
+    
+}
+
 @end

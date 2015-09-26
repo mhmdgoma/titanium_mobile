@@ -648,4 +648,10 @@ typedef enum
  */
 + (NSMutableDictionary *)dictionaryWithCode:(NSInteger)code message:(NSString *)message;
 
+/**
+ Whether or not the current device has 3D is available.
+ @return _YES_ if the current device has 3D is available, _NO_ otherwise.
+ */
++(BOOL) forceTouchCapabilityAvailable;
+
 @end
