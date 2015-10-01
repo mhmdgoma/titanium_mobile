@@ -5,8 +5,11 @@
  * Please see the LICENSE included with this distribution for details.
  */
 #if IS_XCODE_7
-#import "TiAppiOSSearchableIndexProxy.h"
+#import <CoreSpotlight/CoreSpotlight.h>
 #import "TiAppiOSSearchableItemProxy.h"
+#endif
+
+#import "TiAppiOSSearchableIndexProxy.h"
 #import "TiUtils.h"
 
 #ifdef USE_TI_APPIOS
@@ -19,13 +22,20 @@
 
 -(id)isSupported:(id)unused
 {
-    if([TiUtils isIOS9OrGreater]){
+    ENSURE_UI_THREAD(isSupported,unused);
+    
+#if IS_XCODE_7
+    if ([TiUtils isIOS9OrGreater]) {
         return NUMBOOL([CSSearchableIndex isIndexingAvailable]);
-    }else{
+    } else {
         return NUMBOOL(NO);
     }
+#else
+    return NUMBOOL(NO);
+#endif
 }
 
+#if IS_XCODE_7
 -(void)addToDefaultSearchableIndex:(id)args
 {
     ENSURE_ARG_COUNT(args,2);
@@ -48,11 +58,11 @@
         NSMutableDictionary *event = [[[NSMutableDictionary alloc] init] autorelease];
         [event setObject:NUMBOOL((!error)) forKey:@"success"];
         
-        if(error){
+        if (error) {
             [event setObject:[error localizedDescription] forKey:@"error"];
         }
         
-        if (callback){
+        if (callback) {
             [self _fireEventToListener:@"added"
                             withObject:event listener:callback thisObject:nil];
         }
@@ -72,11 +82,11 @@
         NSMutableDictionary *event = [[[NSMutableDictionary alloc] init] autorelease];
         [event setObject:NUMBOOL((!error)) forKey:@"success"];
         
-        if(error){
+        if (error) {
             [event setObject:[error localizedDescription] forKey:@"error"];
         }
         
-        if (callback){
+        if (callback) {
             [self _fireEventToListener:@"removedAll"
                             withObject:event listener:callback thisObject:nil];
         }
@@ -99,11 +109,11 @@
         NSMutableDictionary *event = [[[NSMutableDictionary alloc] init] autorelease];
         [event setObject:NUMBOOL((!error)) forKey:@"success"];
         
-        if(error){
+        if (error) {
             [event setObject:[error localizedDescription] forKey:@"error"];
         }
         
-        if (callback){
+        if (callback) {
             [self _fireEventToListener:@"removed"
                             withObject:event listener:callback thisObject:nil];
         }
@@ -126,17 +136,18 @@
         NSMutableDictionary *event = [[[NSMutableDictionary alloc] init] autorelease];
         [event setObject:NUMBOOL((!error)) forKey:@"success"];
         
-        if(error){
+        if (error) {
             [event setObject:[error localizedDescription] forKey:@"error"];
         }
         
-        if (callback){
+        if (callback) {
             [self _fireEventToListener:@"removed"
                             withObject:event listener:callback thisObject:nil];
         }
     }];
 }
 
-@end
 #endif
+@end
+
 #endif
