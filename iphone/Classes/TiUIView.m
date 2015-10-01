@@ -1263,7 +1263,7 @@ DEFINE_EXCEPTIONS
 	
 	if (handlesTouches)
 	{
-		NSDictionary *evt = [TiUtils pointToDictionary:[touch locationInView:self]];
+		NSDictionary *evt = [self touchToDictionary:touch];
 		if ([proxy _hasListeners:@"touchstart"])
 		{
 			[proxy fireEvent:@"touchstart" withObject:evt propagate:YES];
@@ -1285,12 +1285,24 @@ DEFINE_EXCEPTIONS
 	UITouch *touch = [touches anyObject];
 	if (handlesTouches)
 	{
-		NSDictionary *evt = [TiUtils pointToDictionary:[touch locationInView:self]];
+        NSDictionary *evt = [self touchToDictionary:touch];
 		if ([proxy _hasListeners:@"touchmove"])
 		{
 			[proxy fireEvent:@"touchmove" withObject:evt propagate:YES];
 		}
 	}
+}
+
+- (NSDictionary*) touchToDictionary:(UITouch*) touch
+{
+    NSMutableDictionary *evt = (NSMutableDictionary*)[TiUtils pointToDictionary:[touch locationInView:self]];
+
+    if ([TiUtils isIOS9OrGreater]) {
+        [evt setObject:@(touch.force) forKey:@"force"];
+        [evt setObject:@(touch.maximumPossibleForce) forKey:@"maximumPossibleForce"];
+    }
+    
+    return evt;
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event 
@@ -1306,7 +1318,7 @@ DEFINE_EXCEPTIONS
 	if (handlesTouches)
 	{
 		UITouch *touch = [touches anyObject];
-		NSDictionary *evt = [TiUtils pointToDictionary:[touch locationInView:self]];
+		NSDictionary *evt = [self touchToDictionary:touch];
 		if ([proxy _hasListeners:@"touchend"])
 		{
 			[proxy fireEvent:@"touchend" withObject:evt propagate:YES];
@@ -1343,7 +1355,7 @@ DEFINE_EXCEPTIONS
 	{
 		UITouch *touch = [touches anyObject];
 		CGPoint point = [touch locationInView:self];
-		NSDictionary *evt = [TiUtils pointToDictionary:point];
+		NSDictionary *evt = [self touchToDictionary:touch];
 		if ([proxy _hasListeners:@"touchcancel"])
 		{
 			[proxy fireEvent:@"touchcancel" withObject:evt propagate:YES];
