@@ -4,3 +4,5 @@ gen
 *.jpage
 .DS_Store
 .ant_targets
+.idea
+*.iml
