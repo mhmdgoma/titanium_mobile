@@ -1165,7 +1165,6 @@ If the new path starts with / and the base url is app://..., we have to massage 
         return dict;
     }
 #endif
-    
     return [self pointToDictionary:point];
 }
 
@@ -1872,6 +1871,10 @@ if ([str isEqualToString:@#orientation]) return (UIDeviceOrientation)orientation
     else if ([image isKindOfClass:[NSString class]]) {
         NSURL *bgURL = [TiUtils toURL:image proxy:proxy];
         resultImage = [[ImageLoader sharedLoader] loadImmediateImage:bgURL];
+        if (resultImage==nil)
+        {
+            resultImage = [[ImageLoader sharedLoader] loadRemote:bgURL];
+        }
         if (resultImage==nil && [image isEqualToString:@"Default.png"])
         {
             // special case where we're asking for Default.png and it's in Bundle not path
@@ -1886,7 +1889,7 @@ if ([str isEqualToString:@#orientation]) return (UIDeviceOrientation)orientation
         }
     }
     else if ([image isKindOfClass:[TiBlob class]]) {
-        resultImage = [image image];
+        resultImage = [(TiBlob*)image image];
     }
     return resultImage;
 }
